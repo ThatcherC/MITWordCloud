@@ -39,6 +39,16 @@ br.find_link(text='Show All')
 req = br.click_link(text='Show All')
 br.open(req)
 
+listOLinks = br.links()
+
+for link in listOLinks:
+	try:
+		if(link.attrs[1][1]=='guestbooklinkname'):
+			print link.url
+	except:
+		v = 1+1
+
+
 
 
 #nameLinks = soup.findAll('a')
