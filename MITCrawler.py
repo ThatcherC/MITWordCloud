@@ -34,24 +34,25 @@ br.submit()
 br.open('https://my.mit.edu/uaweb/guestbook.htm?_flowId=guestbook-flow')
 #soup = BeautifulSoup(br.response().read())
 
-br.find_link(text='Show All')
-br.click_link(text='Show All')
+link = br.find_link(text='Show All')
+br.follow_link(link)
+
+print br.response().read()
 
 listOLinks = br.links()
 
+counter = 0
+
 for link in listOLinks:
+	counter+=1
 	try:
 		if(link.attrs[1][1]=='guestbooklinkname'):
 			br.open(link.url)
 			soup = BeautifulSoup(br.response().read())
 			anchor = soup.find("span",{"class":"guestbooknamelabel"}).parent
-			print anchor.contents[6]
+			print anchor.contents[6][25:]
 			#br.back()
 	except:
 		v = 1+1
 
-
-
-
-#nameLinks = soup.findAll('a')
-#print nameLinks[31]
+print counter
