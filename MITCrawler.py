@@ -32,19 +32,21 @@ br.form['j_password'] = settings.creds['password']
 br.submit()
 
 br.open('https://my.mit.edu/uaweb/guestbook.htm?_flowId=guestbook-flow')
-
 #soup = BeautifulSoup(br.response().read())
 
 br.find_link(text='Show All')
-req = br.click_link(text='Show All')
-br.open(req)
+br.click_link(text='Show All')
 
 listOLinks = br.links()
 
 for link in listOLinks:
 	try:
 		if(link.attrs[1][1]=='guestbooklinkname'):
-			print link.url
+			br.open(link.url)
+			soup = BeautifulSoup(br.response().read())
+			anchor = soup.find("span",{"class":"guestbooknamelabel"}).parent
+			print anchor.contents[6]
+			#br.back()
 	except:
 		v = 1+1
 
