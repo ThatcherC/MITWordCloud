@@ -37,7 +37,7 @@ br.open('https://my.mit.edu/uaweb/guestbook.htm?_flowId=guestbook-flow')
 link = br.find_link(text='Show All')
 br.follow_link(link)
 
-print br.response().read()
+br.response().read()
 
 listOLinks = br.links()
 
