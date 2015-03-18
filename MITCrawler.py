@@ -6,6 +6,7 @@ import urllib2
 import mechanize
 import cookielib
 import time
+import random
 
 import settings
 
@@ -31,28 +32,44 @@ br.form['j_username'] = settings.creds['username']
 br.form['j_password'] = settings.creds['password']
 br.submit()
 
-br.open('https://my.mit.edu/uaweb/guestbook.htm?_flowId=guestbook-flow')
-#soup = BeautifulSoup(br.response().read())
+linkIndex = 0
+limit = 300
 
-link = br.find_link(text='Show All')
-br.follow_link(link)
+while linkIndex < limit:
+	br.open('https://my.mit.edu/uaweb/guestbook.htm?_flowId=guestbook-flow')
+	#soup = BeautifulSoup(br.response().read())
 
-br.response().read()
+	link = br.find_link(text='Show All')
+	br.follow_link(link)
 
-listOLinks = br.links()
+	br.response().read()
 
-counter = 0
+	listOLinks = br.links()
 
-for link in listOLinks:
-	counter+=1
-	try:
-		if(link.attrs[1][1]=='guestbooklinkname'):
-			br.open(link.url)
-			soup = BeautifulSoup(br.response().read())
-			anchor = soup.find("span",{"class":"guestbooknamelabel"}).parent
-			print anchor.contents[6][25:]
-			#br.back()
-	except:
-		v = 1+1
+	secondLinkList = []
 
-print counter
+	for link in listOLinks:					#move links from an iterator to a list
+		secondLinkList.append(link)
+		
+	limit = len(secondLinkList)				#make sure we get everyone
+	
+	for g in range(linkIndex,len(secondLinkList)):
+		link = secondLinkList[g]
+		try:
+			if(link.attrs[1][1]=='guestbooklinkname'):
+				br.follow_link(link)
+				soup = BeautifulSoup(br.response().read())
+				anchor = soup.find("span",{"class":"guestbooknamelabel"}).parent
+				if(len(anchor.contents[6])>1):						#cuts empty messages
+					print anchor.contents[6][25:][:-21].replace("&#039;","'").replace("&amp;","&")	#looks nicer
+				linkIndex+=1
+		except IndexError:
+			print "index error"
+		except AttributeError:
+			if(link.attrs[1][1]=='guestbooklinkname'):
+				br.follow_link(link)
+				print linkIndex							
+			break
+		except UnicodeEncodeError:
+			linkIndex+=0
+		
